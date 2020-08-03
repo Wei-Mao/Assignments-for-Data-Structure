@@ -43,7 +43,8 @@ class Binary_Tree
     
     if (tree[node_idx].key < min) {return false;}
 
-    if (tree[node_idx].key > max) {return false;} 
+    // For any node in the left sub-tree, its key must be strictly less than node.key. 
+    if (tree[node_idx].key >= max) {return false;} 
 
     // for each subtree, update  one limit, either min or max.
     return is_binary_search_tree_recursive(tree[node_idx].left, min, tree[node_idx].key) && \

@@ -55,6 +55,7 @@ List<T>::~List()
     // release all nodes from the memory by traverse the list.
     while(ptr_current_node != NULL)
     {
+      // Store impoart info before remval, which is always of concern w.r.t. space complexity.
       Node<T> * ptr_next_node = ptr_current_node->next;
       delete ptr_current_node;
       ptr_current_node = ptr_next_node;  // update current
@@ -132,6 +133,7 @@ void List<T>::pop_front()
   // O(1)
   if(head == NULL)  // Empty list.
   {
+    cout << "Empty List" << endl;
     throw string("Empty List");
   }
 
@@ -157,6 +159,7 @@ void List<T>::pop_back()
   // O(1)
   if(head == NULL) //  empty list
   {
+    cout << "Empty List" << endl;
     throw string("Empty List");
   }
 
@@ -201,6 +204,8 @@ vector<Node<T>*> List<T>::find(T key)
 template <typename T>
 void List<T>::erase(T key)
 {// First find find, then erase. O(n)
+  
+  // Locate all occurences of the key in the List
   vector<Node<T>*> target = find(key);
 
   // Key does not appear/occur in the List
@@ -209,14 +214,15 @@ void List<T>::erase(T key)
     throw string("No such key or empty list!");
   }
 
-  // key appear 
+  // key appear. Remove All Keys from the list.
+  // Notice that you are always faced with the case-by-case analysis.
   for(int i(0); i < target.size(); i++)
   {
     // erase the head node, i.e. pop_front
     if(target[i] == head)
     {
       pop_front();
-      continue;
+      continue;    // skip the current iteration
     }
 
     // erase the tail node, i.e. pop_back
@@ -226,7 +232,7 @@ void List<T>::erase(T key)
       continue;
     }
 
-    // Up to this point, erase the node in the middle
+    // Up to this point, erase the node somewhere in the middle of the list
     target[i]->prev->next = target[i]->next;
     target[i]->next->prev = target[i]->prev;
     delete target[i];
@@ -369,6 +375,11 @@ int main()
   // top_back top_front test
   cout << "top_front " << mylist.top_front() << endl;
   cout << "top_back  " << mylist.top_back() << endl;
+
+  mylist.pop_front();
+  mylist.pop_front();
+  mylist.pop_front();
+  mylist.pop_back();
 
   // empty test
   cout << "empty" << mylist.empty() << endl;

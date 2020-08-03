@@ -1,10 +1,41 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <queue>   // std:priority_queue
 
-using std::vector;
-using std::cin;
-using std::cout;
+using namespace std;
+class Thread 
+{ 
+  public:
+    // One thread has two data members: ID and the time when it becomes free again.
+    int ID;
+    long long next_free_time;
+
+    // Constructor
+    Thread(int _ID)
+      :ID(_ID)
+    {
+      next_free_time = 0;
+    }
+};
+
+
+class Compare_Thread
+{
+  public:
+    // determine who is of lower priority
+    bool operator () (Thread & thread1, Thread &thread2)
+    {
+      if(thread1.next_free_time == thread2.next_free_time)
+      {
+	// For the two threads who become free simultaneously, 
+	// the tread with smaller ID is given precedence over the one with larger ID.
+	return thread1.ID >  thread2.ID;
+      }
+
+      return thread1.next_free_time > thread2.next_free_time;
+    }
+};
 
 class JobQueue {
  private:
@@ -46,10 +77,39 @@ class JobQueue {
     }
   }
 
+  void assign_jobs_fast()
+  {
+    /*
+       In contrast with the naive implementation, we replace vector of threads with priority_queue of threads to perform the search for suitable worker in logarithmic time.
+       Hence, the total running time falls/drops from O(n^2) to  O(nlogn)
+    */ 
+    // Info to be stored
+    assigned_workers_.resize(jobs_.size());
+    start_times_.resize(jobs_.size());
+
+    priority_queue<Thread, vector<Thread>, Compare_Thread> pq_threads;
+    for(int i(0); i < num_workers_; i++)
+    {
+      pq_threads.push(Thread(i));
+    }
+
+    for(int i(0); i < jobs_.size(); i ++)
+    {
+      int duration = jobs_[i];
+      Thread thread_free = pq_threads.top();
+      pq_threads.pop();
+      assigned_workers_[i] = thread_free.ID;
+      start_times_[i] = thread_free.next_free_time;
+      thread_free.next_free_time += duration;
+      pq_threads.push(thread_free);
+    }
+  }
+
  public:
   void Solve() {
     ReadData();
-    AssignJobs();
+    /* AssignJobs(); */
+    assign_jobs_fast();
     WriteResponse();
   }
 };
