@@ -100,6 +100,7 @@ class HeapBuilder {
     /*       swaps_.push_back(make_pair(i, j)); */
     /*     } */
     /*   } */
+    // Time Complexity: O(n) with n as the total number of nodes.
     int n = data_.size();
     for(int i(n/2 - 1); i >= 0; i--)
     {
